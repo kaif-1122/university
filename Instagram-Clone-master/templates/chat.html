@@ -1,0 +1,300 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🎓 Smart University Recommender</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+
+    .chat-wrapper {
+      width: 450px;
+      height: 550px;
+      max-width: 700px;
+      background: #fff;
+      margin-top: 20px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header {
+      background: #007bff;
+      color: #fff;
+      padding: 16px;
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .chat-container {
+      padding: 20px;
+      height: 500px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .message {
+      max-width: 75%;
+      padding: 12px 16px;
+      border-radius: 20px;
+      font-size: 15px;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+
+    .bot-message {
+      align-self: flex-start;
+      background: #f1f1f1;
+      color: #333;
+    }
+
+    .user-message {
+      align-self: flex-end;
+      background: #007bff;
+      color: #fff;
+    }
+
+    .input-area {
+      display: flex;
+      padding: 16px;
+      border-top: 1px solid #eee;
+      gap: 10px;
+    }
+
+    #user-input {
+      flex-grow: 1;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+      outline: none;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .university-list {
+      margin-top: 10px;
+      padding-left: 20px;
+    }
+
+    .university-item {
+      margin-bottom: 6px;
+    }
+
+    .public {
+      color: green;
+      font-weight: bold;
+    }
+
+    .private {
+      color: #007bff;
+      font-weight: bold;
+    }
+
+  </style>
+</head>
+<body>
+{% block content %}
+  <div class="chat-wrapper">
+    <div class="chat-header">🎓 UniBot</div>
+    <div class="chat-container" id="chatbox">
+      <div class="message bot-message">👋 Hello! I can help you find the best universities in Pakistan. What's your field of interest?</div>
+    </div>
+    <div class="input-area">
+      <input type="text" id="user-input" placeholder="Type your message..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    const chatbox = document.getElementById('chatbox');
+    const userInput = document.getElementById('user-input');
+
+    let conversationState = {
+      waitingForField: true,
+      waitingForMarks: false,
+      waitingForSubject: false,
+      userData: { field: '', marks: 0, subject: '' }
+    };
+
+    const universities = {
+      'Engineering': {
+        public: ['NUST', 'UET Lahore', 'MUET', 'GIKI', 'COMSATS'],
+        private: ['LUMS', 'FAST-NUCES', 'UMT', 'SZABIST', 'Habib University']
+      },
+      'Medical': {
+        public: ['King Edward Medical University', 'Allama Iqbal Medical College', 'Dow University', 'Punjab Medical College'],
+        private: ['Shifa College', 'Lahore Medical & Dental College', 'Ziauddin University', 'Foundation Medical College', 'Baqai Medical University']
+      },
+      'Computer Science': {
+        public: ['NUST SEECS', 'PUCIT', 'COMSATS CS', 'QAU CS'],
+        private: ['LUMS CS', 'IBA CS', 'SZABIST CS', 'UCP CS', 'MAJU CS']
+      },
+      'Business': {
+        public: ['IBA Karachi', 'PU Lahore School of Economics', 'QAU Management', 'KU Business School', 'BZU Business'],
+        private: ['LUMS SDSB', 'CBM IoBM', 'LSE', 'UMT Business', 'SZABIST Business']
+      },
+      'Arts': {
+        public: ['NCA', 'PU Art & Design', 'KU Arts', 'Peshawar Arts', 'Islamia Bahawalpur'],
+        private: ['BNU', 'Indus Valley', 'UMT Arts', 'LCWU', 'Habib Arts']
+      },
+      'Law': {
+        public: ['PU Law College', 'Karachi University Law', 'QAU Law', 'Islamia University Law', 'Peshawar Law'],
+        private: ['TMUC', 'UCP Law', 'Superior Law', 'Hamdard Law', 'Leads Law']
+      },
+      'Social Sciences': {
+        public: ['QAU Social Sciences', 'PU Behavioral Sciences', 'KU Social Sciences', 'Peshawar Social', 'BZU Social'],
+        private: ['LUMS Social Sciences', 'UCP Social Sciences', 'SZABIST Social', 'BNU Social', 'LSE Social']
+      },
+      'Education': {
+        public: ['AIOU Education', 'PU IER', 'University of Education', 'Sindh Education', 'Balochistan Education'],
+        private: ['UCP Education', 'Leads Education', 'Superior Education', 'Virtual University', 'Hamdard Education']
+      },
+      'Agriculture': {
+        public: ['UAF', 'Arid Agriculture Rawalpindi', 'Sindh Agriculture University', 'Poonch Agriculture', 'BZU Agriculture'],
+        private: ['Riphah Agriculture', 'UOL Agriculture', 'Gomal Agriculture', 'Superior Agriculture', 'UCP Agriculture']
+      }
+    };
+
+    const recommendedSubjects = {
+      'Engineering': ['Mathematics', 'Physics', 'Chemistry'],
+      'Medical': ['Biology', 'Chemistry', 'Physics'],
+      'Computer Science': ['Mathematics', 'Computer Science', 'Physics'],
+      'Business': ['Mathematics', 'Economics', 'Business Studies'],
+      'Arts': ['Fine Arts', 'English Literature', 'History'],
+      'Law': ['English', 'Pakistan Studies', 'Civics'],
+      'Social Sciences': ['Sociology', 'Psychology', 'Political Science'],
+      'Education': ['Education', 'Psychology', 'English'],
+      'Agriculture': ['Biology', 'Chemistry', 'Agriculture Science']
+    };
+
+    function sendMessage() {
+      const message = userInput.value.trim();
+      if (message === '') return;
+      addMessage(message, 'user');
+      userInput.value = '';
+
+      if (conversationState.waitingForField) {
+        const fields = Object.keys(universities);
+        const matchedField = fields.find(field =>
+          message.toLowerCase().includes(field.toLowerCase())
+        );
+
+        if (matchedField) {
+          conversationState.userData.field = matchedField;
+          conversationState.waitingForField = false;
+          conversationState.waitingForMarks = true;
+          addMessage(`📊 Noted! You're interested in ${matchedField}. Please enter your marks (out of 1100):`, 'bot');
+        } else {
+          addMessage("❗ Please specify a valid field: Engineering, Medical, Computer Science, Business, Arts, Law, Social Sciences, Education, or Agriculture.", 'bot');
+        }
+      } else if (conversationState.waitingForMarks) {
+        const marks = parseInt(message);
+        if (!isNaN(marks) && marks >= 0 && marks <= 1100) {
+          conversationState.userData.marks = marks;
+          conversationState.waitingForMarks = false;
+          conversationState.waitingForSubject = true;
+
+          const field = conversationState.userData.field;
+          const subjects = recommendedSubjects[field].join(', ');
+          addMessage(`📘 Thanks! You got ${marks}. Now tell me which subject you like most among: ${subjects}`, 'bot');
+        } else {
+          addMessage("❗ Please enter valid marks (between 0 and 1100).", 'bot');
+        }
+      } else if (conversationState.waitingForSubject) {
+        const field = conversationState.userData.field;
+        const subjects = recommendedSubjects[field];
+        const matchedSubject = subjects.find(subject =>
+          message.toLowerCase().includes(subject.toLowerCase())
+        );
+
+        if (matchedSubject) {
+          conversationState.userData.subject = matchedSubject;
+          conversationState.waitingForSubject = false;
+          recommendUniversities();
+        } else {
+          addMessage(`❗ Please select from: ${subjects.join(', ')}`, 'bot');
+        }
+      }
+    }
+
+    function recommendUniversities() {
+      const { field, marks, subject } = conversationState.userData;
+      let message = `📚 Based on your interest in <b>${field}</b>, marks <b>(${marks}/1100)</b>, and subject <b>${subject}</b>, here are your recommended universities:<br><br>`;
+
+      message += `<span class="public">Public Universities:</span><div class="university-list">`;
+      universities[field].public.forEach(uni => {
+        message += `<div class="university-item">✅ ${uni}</div>`;
+      });
+      message += `</div><br>`;
+
+      message += `<span class="private">Private Universities:</span><div class="university-list">`;
+      universities[field].private.forEach(uni => {
+        message += `<div class="university-item">🏫 ${uni}</div>`;
+      });
+      message += `</div><br>`;
+
+      if (marks >= 900) {
+        message += `🌟 Excellent score! Aim for top universities and merit scholarships.`;
+      } else if (marks >= 700) {
+        message += `👍 Good score! You have chances in top private and some public universities.`;
+      } else {
+        message += `📈 Try for universities with lower merit or improve via entrance exams.`;
+      }
+
+      addMessage(message, 'bot');
+
+      setTimeout(() => {
+        conversationState = {
+          waitingForField: true,
+          waitingForMarks: false,
+          waitingForSubject: false,
+          userData: { field: '', marks: 0, subject: '' }
+        };
+        addMessage("💬 Would you like to check universities for another field? Please enter your new field of interest.", 'bot');
+      }, 3500);
+    }
+
+    function addMessage(text, sender) {
+      const messageDiv = document.createElement('div');
+      messageDiv.classList.add('message', sender === 'user' ? 'user-message' : 'bot-message');
+      messageDiv.innerHTML = text;
+      chatbox.appendChild(messageDiv);
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+
+    userInput.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') sendMessage();
+    });
+  </script>
+  {% endblock %}
+</body>
+</html>
+

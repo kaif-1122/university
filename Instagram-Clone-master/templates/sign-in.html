@@ -1,0 +1,78 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://kit.fontawesome.com/fc1e235b2e.js"></script>
+  <link rel="stylesheet" href="{% static 'assets2/style.css' %}">
+  <title>University Hub | Login </title>
+</head>
+<style>
+  /* Reset and base styles */
+ #wrapper, .container {
+  margin: 0 auto;
+  padding-top: 20px; /* reduce this */
+  padding-bottom: 20px; /* reduce this */
+  min-height: 100vh; /* avoid tall min-height */
+}
+.logo{
+  margin-top: -60px;
+ }
+ .sign-up{
+  border: none;
+ }
+ .srch_explore {
+    margin-top: -50px; /* decrease this value to move it up */
+  }
+  .wrapper{
+    width:-30px;
+  }
+
+</style>
+<body>
+
+  <div id="wrapper">
+    <div class="container">
+      {% comment %} <div class="phone-app-demo"></div> {% endcomment %}
+      <div class="form-data">
+        <form action="" method="POST">{% csrf_token %}
+          {% comment %} <div class="logo">
+            <img src="{% static 'assets2/images/logo.png' %}" alt="logo">
+          </div> {% endcomment %}
+          <!-- <input type="text" placeholder="Phone number, username, or email"> -->
+          <!-- <input type="password" placeholder="Password"> -->
+          <form action="{% url 'sign-in' %}" method="POST">
+    {% csrf_token %}
+    <div class="logo">
+        <img src="{% static 'assets2/images/logo.png' %}" alt="logo">
+    </div>
+    <input type="text" name="username" placeholder="Username">
+    <input type="password" name="password" placeholder="Password">
+    <button class="form-btn" type="submit">Log in</button>
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+    <span class="has-separator">Or</span>
+    <div class="sign-up">
+        Don't have an account? <a href="{% url 'sign-up' %}">Sign up</a>
+    </div>
+</form>
+        
+        {% comment %} <div class="get-the-app">
+          <span>Get the app.</span> {% endcomment %}
+          {% comment %} <div class="badges">
+                        <img src="{% static 'assets2/images/app-store.png' %}" alt="app-store badge">
+
+            <img src="{% static 'assets2/images/google-play.png' %}" alt="google-play badge">
+
+          </div> {% endcomment %}
+        </div>
+      </div>
+    </div>
+</body>
+
+</html>

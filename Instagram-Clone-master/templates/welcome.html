@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Hide header and navbar on welcome page */
+    body.welcome-page .header, 
+    body.welcome-page .navbar {
+        display: none;
+    }
+    
+    /* Hero Section Styles */
+    .hero {
+        position: relative;
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        color: white;
+        padding: 0 20px;
+    }
+
+    .hero-slideshow {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -2;
+    animation: slideShow 24s infinite;
+    background-size: cover;
+    background-position: center;
+}
+
+    .hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3));
+    z-index: -1;
+}
+ @keyframes slideShow {
+    0%, 100% {
+        background-image: url("{% static 'assets2/images/university-bg.jpg' %}");
+    }
+    25% {
+        background-image: url("{% static 'assets2/images/university-bg1.jpg' %}");
+    }
+    50% {
+        background-image: url("{% static 'assets2/images/university-bg2.jpg' %}");
+    }
+    75% {
+        background-image: url("{% static 'assets2/images/university-bg3.jpg' %}");
+    }
+}
+
+/* Optional: Add panning effect */
+@keyframes panImage {
+    0% {
+        background-position: 0% 0%;
+    }
+    50% {
+        background-position: 100% 100%;
+    }
+    100% {
+        background-position: 0% 0%;
+    }
+}
+
+.hero-slideshow {
+    animation: 
+        slideShow 24s infinite,
+        panImage 36s infinite alternate;
+}
+
+    .hero::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.4);
+        z-index: -1;
+    }
+
+    .hero-content {
+        max-width: 800px;
+        z-index: 1;
+    }
+
+    .hero h1 {
+        font-size: 3.5rem;
+        margin-bottom: 20px;
+        font-weight: 700;
+    }
+
+    .hero p {
+        font-size: 1.5rem;
+        margin-bottom: 40px;
+    }
+
+    .auth-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+    }
+
+    .btn-primary {
+        background-color: #2c3e50;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        border: 2px solid #2c3e50;
+    }
+
+    .btn-primary:hover {
+        background-color: transparent;
+        color: white;
+        border-color: white;
+    }
+
+    .btn-secondary {
+         background-color: #2c3e50; 
+        color: white;
+        padding: 12px 30px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        border: 2px solid #2c3e50;
+    }
+
+    .btn-secondary:hover {
+       background-color: transparent;
+        color: white;
+        border-color: white;
+    }
+
+    @media (max-width: 768px) {
+        .hero h1 {
+            font-size: 2.5rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+        }
+
+        .auth-buttons {
+            flex-direction: column;
+            gap: 15px;
+        }
+    }
+</style>
+
+<div class="hero">
+     <div class="hero-slideshow"></div>
+    <div class="hero-content"> 
+    <h1>Welcome to University Hub</h1>
+<p>Connect with students, share knowledge, and grow together in our academic community</p>
+        <div class="auth-buttons">
+            <a href="{% url 'sign-in' %}" class="btn-primary">Login</a>
+            <a href="{% url 'sign-up' %}" class="btn-secondary">Register</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
