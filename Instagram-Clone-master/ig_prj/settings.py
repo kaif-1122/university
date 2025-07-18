@@ -129,7 +129,13 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
+ALLOWED_HOSTS = ['*']  # For initial setup, tighten this later
 
+# Add at the bottom of settings.py
+import os
+if os.getenv('RAILWAY', False):
+    # Railway specific settings
+    DEBUG = False
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
