@@ -26,6 +26,7 @@ SECRET_KEY = 'k1l8gsqp&&glb@%qafi26xb-y4%xjf60g)2!6bspqc+@xjl7me'
 DEBUG = True
 
 ALLOWED_HOSTS = ['instagram-clone-d.herokuapp.com', '127.0.0.1']
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # Application definition
