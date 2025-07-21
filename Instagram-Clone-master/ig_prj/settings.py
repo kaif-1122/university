@@ -130,6 +130,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 ALLOWED_HOSTS = ['*']  # For initial setup, tighten this later
+ALLOWED_HOSTS = ['rahima123.pythonanywhere.com']
+
 
 # Add at the bottom of settings.py
 import os
