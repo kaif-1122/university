@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 SECRET_KEY = 'k1l8gsqp&&glb@%qafi26xb-y4%xjf60g)2!6bspqc+@xjl7me'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = false
 
 ALLOWED_HOSTS = ['instagram-clone-d.herokuapp.com', '127.0.0.1']
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -130,8 +130,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
-ALLOWED_HOSTS = ['*']  # For initial setup, tighten this later
-ALLOWED_HOSTS = ['rahima123.pythonanywhere.com']
+ALLOWED_HOSTS = ['instagram-clone-d.herokuapp.com', '127.0.0.1', 'rahima123.pythonanywhere.com']
 
 
 # Add at the bottom of settings.py
